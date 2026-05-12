@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>E-Library Sync</title>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-book-reader"></i> SocialRead Ecosystem</h1>
+        <p class="subtitle">Manajemen Transformasi Literasi Berbasis Social Reading</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h3><i class="fas fa-user-plus"></i> Registrasi Akun</h3>
+            <form action="/add_akun" method="POST" class="form-grid">
+                <input type="text" name="nama" placeholder="Nama Lengkap" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <button type="submit" class="btn-save">Simpan</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-users-cog"></i> Manajemen Anggota</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="text-align: left; background: #f8fafc;">
+                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Nama</th>
+                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Email</th>
+                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in akuns %}
+                    <tr>
+                        <form action="{{ url_for('update_akun', id=a.id) }}" method="POST">
+                            <td style="padding: 8px;">
+                                <input type="text" name="nama" value="{{ a.nama }}" required style="width: 90%;">
+                            </td>
+                            <td style="padding: 8px;">
+                                <input type="email" name="email" value="{{ a.email }}" required style="width: 90%;">
+                            </td>
+                            <td style="padding: 8px;">
+                                <button type="submit" style="color: #2563eb; background: none; border: none; cursor: pointer;">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                                <a href="{{ url_for('delete_akun', id=a.id) }}" 
+                                   style="color: #ef4444; margin-left: 10px; text-decoration: none;" 
+                                   onclick="return confirm('Hapus akun ini?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </form>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-plus-square"></i> Input E-Book Baru</h3>
+            <form action="/add_ebook" method="POST" class="form-grid">
+                <input type="text" name="isbn" placeholder="ISBN (PK)" required>
+                <input type="text" name="judul" placeholder="Judul Buku" required>
+                <input type="text" name="penulis" placeholder="Penulis" required>
+                <select name="lisensi_id">
+                    {% for l in lisensis %}
+                    <option value="{{ l.id }}">{{ l.jenis_akses }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-save">Tambah Buku</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-pen-nib"></i> Buat Kutipan Sosial</h3>
+            <form action="/add_kutipan" method="POST" class="form-grid">
+                <select name="akun_id" required>
+                    <option value="">-- Pilih Akun --</option>
+                    {% for a in akuns %} <option value="{{ a.id }}">{{ a.nama }}</option> {% endfor %}
+                </select>
+                <select name="isbn" required>
+                    <option value="">-- Pilih Buku --</option>
+                    {% for b in ebooks %} <option value="{{ b.isbn }}">{{ b.judul }}</option> {% endfor %}
+                </select>
+                <input type="text" name="teks" placeholder="Isi kutipan menarik..." required style="grid-column: span 2;">
+                <button type="submit" class="btn-save">Post Kutipan</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-quote-right"></i> Feed Literasi Terkini</h3>
+            {% for k in kutipans %}
+            <div class="quote-box" style="border-left: 4px solid #2563eb; background: #f8fafc; padding: 15px; margin-bottom: 10px; border-radius: 4px;">
+                <p style="font-style: italic;">"{{ k.teks_kutipan }}"</p>
+                <small>Dibagikan oleh <b>{{ k.pembuat.nama }}</b> dari buku <b>{{ k.buku.judul }}</b></small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

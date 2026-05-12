@@ -1,0 +1,45 @@
+<div class="card">
+    <h3><i class="fas fa-book"></i> Inventaris E-Book</h3>
+    <form action="/add_ebook" method="POST" class="form-inline">
+        <input type="text" name="isbn" placeholder="ISBN (PK)" required>
+        <input type="text" name="judul" placeholder="Judul Buku" required>
+        <select name="lisensi_id">
+            <option value="1">Lisensi Publik</option>
+            <option value="2">Lisensi Premium</option>
+        </select>
+        <button type="submit" class="btn-tambah">Tambah E-Book</button>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ISBN</th>
+                <th>Judul</th>
+                <th>Lisensi</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in ebooks %}
+            <tr>
+                <td>{{ b.isbn }}</td>
+                <td>{{ b.judul }}</td>
+                <td>{{ b.lisensi_info.jenis_akses }}</td>
+                <td><a href="#">Lock Akses</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3><i class="fas fa-quote-left"></i> Feed Kutipan Komunitas</h3>
+    <div class="quote-grid">
+        {% for k in kutipans %}
+        <div class="quote-item">
+            <p>"{{ k.teks_kutipan }}"</p>
+            <small>Oleh: {{ k.pembuat.nama }} | Buku: {{ k.sumber_ebook.judul }}</small>
+        </div>
+        {% endfor %}
+    </div>
+</div>
